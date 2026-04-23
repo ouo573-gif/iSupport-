@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iSupport Taiwan｜使用者旅程對照表</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --agree-bg:#dcfce7; --agree-fg:#15803d; --agree-bd:#86efac;
+  --comp-bg:#dbeafe;  --comp-fg:#1d4ed8;  --comp-bd:#93c5fd;
+  --confl-bg:#ffedd5; --confl-fg:#c2410c; --confl-bd:#fb923c;
+  --navy:#1e293b; --sidebar-w:270px;
+}
+
+html { font-size: 20px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+/* ── App header ── */
+.app-header {
+  background: var(--navy);
+  color: #fff;
+  padding: 18px 32px 0;
+}
+.app-header h1 { font-size: 1.15rem; font-weight: 700; }
+.app-header p  { font-size: 0.78rem; color: #94a3b8; margin-top: 3px; }
+
+/* ── Filter bar ── */
+.filter-bar {
+  background: var(--navy);
+  padding: 10px 32px 12px;
+  display: flex; gap: 8px; align-items: center;
+  border-bottom: 1px solid #334155;
+}
+.filter-label { font-size: 0.72rem; color: #64748b; }
+.filter-btn {
+  padding: 3px 12px; border-radius: 999px;
+  border: 1px solid #475569; background: transparent;
+  color: #94a3b8; font-size: 0.72rem; cursor: pointer; transition: all .15s;
+}
+.filter-btn:hover { border-color: #64748b; color: #e2e8f0; }
+.filter-btn.fa   { background:#fff; color:var(--navy); border-color:#fff; }
+.filter-btn.fag  { background:var(--agree-bg); color:var(--agree-fg); border-color:var(--agree-bd); }
+.filter-btn.fco  { background:var(--comp-bg);  color:var(--comp-fg);  border-color:var(--comp-bd); }
+.filter-btn.fcn  { background:var(--confl-bg); color:var(--confl-fg); border-color:var(--confl-bd); }
+
+/* ── Main layout ── */
+.app-main {
+  display: flex; max-width: 1200px; margin: 20px auto;
+  padding: 0 20px; gap: 18px; align-items: flex-start;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: var(--sidebar-w); flex-shrink: 0;
+  background: #fff; border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.07);
+  position: sticky; top: 20px; overflow: hidden;
+}
+.sidebar-title {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: #94a3b8;
+  padding: 12px 16px 8px; border-bottom: 1px solid #f1f5f9;
+}
+.timeline { padding: 6px 0; }
+.tl-item {
+  display: flex; align-items: flex-start;
+  padding: 9px 14px; cursor: pointer;
+  transition: background .1s; position: relative;
+  border-left: 3px solid transparent;
+}
+.tl-item:hover    { background: #f8fafc; }
+.tl-item.active   { background: #eff6ff; border-left-color: #3b82f6; }
+.tl-item.dimmed   { opacity: .3; pointer-events: none; }
+.tl-connector {
+  position: absolute; left: 21px; top: 21px;
+  width: 2px; height: calc(100% - 2px); background: #e2e8f0;
+}
+.tl-item:last-child .tl-connector { display: none; }
+.tl-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid #cbd5e1; background: #fff;
+  flex-shrink: 0; margin-top: 3px; margin-right: 9px;
+  transition: all .15s; position: relative; z-index: 1;
+}
+.tl-item.active .tl-dot { background: #3b82f6; border-color: #3b82f6; }
+.tl-name { font-size: 0.82rem; font-weight: 600; color: #374151; line-height: 1.3; }
+.tl-item.active .tl-name { color: #1d4ed8; }
+.tl-sub  { font-size: 0.69rem; color: #9ca3af; margin-top: 1px; }
+.tl-badge {
+  width: 7px; height: 7px; border-radius: 50%;
+  flex-shrink: 0; margin-left: auto; margin-top: 5px;
+}
+
+/* ── Panel ── */
+.panel {
+  flex: 1; background: #fff; border-radius: 10px; min-width: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,.07); overflow: hidden;
+}
+
+/* Panel header */
+.ph {
+  padding: 18px 22px 14px; border-bottom: 1px solid #f1f5f9;
+}
+.ph-top {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px; flex-wrap: wrap;
+}
+.ph-num {
+  font-size: 0.7rem; font-weight: 700; color: #94a3b8;
+  background: #f1f5f9; padding: 2px 7px; border-radius: 4px;
+}
+.ph-name { font-size: 1.1rem; font-weight: 700; }
+.ph-sub  { font-size: 0.78rem; color: #94a3b8; }
+.align-badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 0.72rem; font-weight: 600; cursor: pointer; border: none;
+  margin-left: auto; white-space: nowrap; transition: opacity .15s;
+}
+.align-badge:hover { opacity: .8; }
+.ab-agree { background: var(--agree-bg); color: var(--agree-fg); }
+.ab-comp  { background: var(--comp-bg);  color: var(--comp-fg);  }
+.ab-confl { background: var(--confl-bg); color: var(--confl-fg); }
+.ph-summary {
+  padding: 12px 16px; border-radius: 8px;
+  border-left: 4px solid transparent;
+}
+.ph-summary.ps-agree { background: var(--agree-bg); border-left-color: var(--agree-fg); }
+.ph-summary.ps-comp  { background: var(--comp-bg);  border-left-color: var(--comp-fg);  }
+.ph-summary.ps-confl { background: var(--confl-bg); border-left-color: var(--confl-fg); }
+.ph-lead {
+  font-size: 1rem; font-weight: 600; color: #1e293b; line-height: 1.45;
+  margin-bottom: 4px;
+}
+.ph-detail {
+  font-size: 0.82rem; color: #475569; line-height: 1.55;
+}
+
+/* Sections */
+.section { padding: 16px 22px; border-bottom: 1px solid #f1f5f9; }
+.section:last-child { border-bottom: none; }
+.sec-title {
+  font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: #334155; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.sec-title::after { content:''; flex:1; height:1px; background:#f1f5f9; }
+
+/* ── Charts ── */
+.chart-title { font-size: 0.72rem; color: #64748b; margin-bottom: 8px; }
+
+/* Stacked bar */
+.stacked-bar { height: 26px; display: flex; border-radius: 5px; overflow: hidden; margin-bottom: 7px; }
+.stk-seg {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.68rem; font-weight: 700; color: rgba(255,255,255,.9);
+  overflow: hidden; transition: filter .15s;
+}
+.stk-seg:hover { filter: brightness(.9); }
+.stk-legend { display: flex; flex-wrap: wrap; gap: 8px; }
+.leg-item { display: flex; align-items: center; gap: 4px; font-size: 0.7rem; color: #64748b; }
+.src-glossary { width:100%; margin-top: 10px; border-collapse: collapse; font-size: 0.72rem; }
+.src-glossary th { text-align:left; color:#94a3b8; font-weight:600; padding: 3px 6px; border-bottom: 1px solid #e2e8f0; }
+.src-glossary td { padding: 4px 6px; color:#475569; border-bottom: 1px solid #f1f5f9; vertical-align:top; }
+.src-glossary td:first-child { font-weight:600; color:#334155; white-space:nowrap; }
+.leg-dot  { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* Horizontal bar */
+.bar-chart { display: flex; flex-direction: column; gap: 5px; }
+.bar-row   { display: flex; align-items: center; gap: 7px; }
+.bar-lbl   { font-size: 0.72rem; color: #64748b; width: 90px; flex-shrink: 0; text-align: right; }
+.bar-track { flex:1; height: 19px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
+.bar-fill  {
+  height: 100%; border-radius: 4px;
+  display: flex; align-items: center; padding-left: 6px;
+  font-size: 0.68rem; font-weight: 700; color: #fff;
+  transition: width .4s ease; white-space: nowrap;
+}
+.bar-val { font-size: 0.72rem; color: #374151; font-weight: 600; width: 44px; flex-shrink: 0; }
+
+/* Compare */
+.cmp-chart { display: flex; flex-direction: column; gap: 8px; }
+.cmp-row   { display: flex; align-items: center; gap: 7px; }
+.cmp-lbl   { font-size: 0.72rem; color: #64748b; width: 80px; flex-shrink: 0; }
+.cmp-track { flex:1; height: 22px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
+.cmp-fill  {
+  height: 100%; border-radius: 4px;
+  display: flex; align-items: center; justify-content: flex-end;
+  padding-right: 6px; font-size: 0.7rem; font-weight: 700; color: #fff;
+  transition: width .4s ease;
+}
+.cmp-note { font-size: 0.7rem; color: #64748b; width: 80px; flex-shrink: 0; }
+
+/* Retention */
+.ret-chart { display: flex; flex-direction: column; gap: 5px; }
+.ret-row   { display: flex; align-items: center; gap: 7px; }
+.ret-lbl   { font-size: 0.72rem; color: #64748b; width: 70px; flex-shrink: 0; text-align: right; }
+.ret-track { flex:1; height: 18px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
+.ret-fill  {
+  height: 100%; border-radius: 3px; background: #3b82f6;
+  display: flex; align-items: center; padding-left: 4px;
+  font-size: 0.65rem; font-weight: 700; color: #fff;
+}
+.ret-note { font-size: 0.7rem; width: 160px; flex-shrink: 0; }
+
+/* SVG funnel wrapper */
+.funnel-wrap { overflow: hidden; }
+.funnel-wrap svg { width: 100%; max-width: 340px; display: block; margin: 0 auto; }
+
+/* Metrics grid */
+.metrics-grid { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.metric-card  {
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px;
+  padding: 7px 11px; min-width: 110px;
+}
+.m-key  { font-size: 0.68rem; color: #94a3b8; margin-bottom: 2px; }
+.m-val  { font-size: 1rem; font-weight: 700; }
+.m-note { font-size: 0.66rem; color: #94a3b8; margin-top: 1px; }
+.m-warn { font-size: 0.66rem; color: #d97706; margin-top: 1px; }
+
+/* Qual section */
+.code-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.code-tag  {
+  padding: 2px 9px; background: #f3f0ff; color: #6d28d9;
+  border-radius: 4px; font-size: 0.72rem; font-weight: 700;
+}
+.code-lbl   { font-size: 0.72rem; color: #94a3b8; }
+.qual-sum   { font-size: 0.82rem; color: #475569; line-height: 1.5; margin-bottom: 10px; }
+.quotes     { display: flex; flex-direction: column; gap: 7px; }
+.quote      {
+  font-size: 0.8rem; color: #374151; line-height: 1.55;
+  border-left: 3px solid #c4b5fd; padding: 5px 10px;
+  background: #faf5ff; border-radius: 0 5px 5px 0;
+}
+.q-src { font-size: 0.68rem; color: #9ca3af; margin-top: 3px; }
+
+/* Opts section */
+.opt-list { display: flex; flex-direction: column; gap: 7px; }
+.opt-item {
+  display: flex; align-items: flex-start; gap: 7px;
+  padding: 7px 10px; background: #f8fafc; border-radius: 6px;
+}
+.p-pill {
+  font-size: 0.66rem; font-weight: 700; padding: 2px 6px;
+  border-radius: 3px; flex-shrink: 0; white-space: nowrap; margin-top: 1px;
+}
+.p-h { background: #fee2e2; color: #b91c1c; }
+.p-m { background: #fef3c7; color: #92400e; }
+.p-l { background: #dcfce7; color: #166534; }
+.opt-text { font-size: 0.8rem; color: #374151; line-height: 1.45; }
+
+/* Responsive */
+@media (max-width: 680px) {
+  .app-main { flex-direction: column; padding: 0 10px; }
+  .sidebar  { width: 100%; position: static; }
+  .timeline { display: flex; overflow-x: auto; padding: 6px; gap: 4px; }
+  .tl-item  { min-width: 90px; padding: 6px 8px; border-left: none; border-bottom: 3px solid transparent; }
+  .tl-item.active { border-bottom-color: #3b82f6; border-left-color: transparent; }
+  .tl-connector { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>iSupport Taiwan｜使用者旅程對照表</h1>
+  <p>GA4 量化指標 (What) × 訪談質化回饋 (Why/Feel)｜2025 年度混合方法 UX 研究</p>
+</div>
+
+<div class="filter-bar">
+  <span class="filter-label">篩選對齊類型：</span>
+  <button class="filter-btn fa"  onclick="applyFilter('all',   this)">全部顯示</button>
+  <button class="filter-btn"     onclick="applyFilter('agree', this)">✓ 一致</button>
+  <button class="filter-btn"     onclick="applyFilter('comp',  this)">↔ 互補</button>
+  <button class="filter-btn"     onclick="applyFilter('confl', this)">✗ 矛盾</button>
+  <span style="margin-left:auto;font-size:.68rem;color:#475569">↑↓ 鍵盤切換階段</span>
+</div>
+
+<div class="app-main">
+  <div class="sidebar">
+    <div class="sidebar-title">旅程階段</div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+// ── Lookup tables ──
+const ALIGN = {
+  agree: { label:'✓ 一致', cls:'ab-agree', dotColor:'#16a34a' },
+  comp:  { label:'↔ 互補', cls:'ab-comp',  dotColor:'#2563eb' },
+  confl: { label:'✗ 矛盾', cls:'ab-confl', dotColor:'#ea580c' },
+};
+const ALIGN_ORDER = ['agree','comp','confl'];
+const PRI = {
+  high:   { cls:'p-h', text:'高' },
+  medium: { cls:'p-m', text:'中' },
+  low:    { cls:'p-l', text:'低' },
+};
+
+// ── Data ──
+const data = [
+  {
+    id:'enter', stage:'0', name:'進入', sub:'流量來源 / 首次到達',
+    align:'comp',
+    lead:'平台依賴人工收案，缺乏自主成長機制。',
+    detail:'Direct 57% 的流量來自院長助理門診外一對一帶入；自然搜尋僅 29%，平台幾乎沒有自然流量增長能力。',
+    chart:{
+      type:'stacked',
+      title:'流量來源分佈（2025 全年，共 1,440 次工作階段）',
+      segs:[
+        {label:'Direct',         pct:57, color:'#3b82f6', raw:'823'},
+        {label:'Organic Search', pct:29, color:'#10b981', raw:'413'},
+        {label:'Social',         pct:8,  color:'#f59e0b', raw:'122'},
+        {label:'Referral',       pct:6,  color:'#8b5cf6', raw:'82' },
+      ],
+      glossary:[
+        {term:'Direct（直接）',         desc:'直接輸入網址、點書籤，或來源無法追蹤'},
+        {term:'Organic Search（自然搜尋）',desc:'在 Google 等搜尋引擎輸入關鍵字後點擊免費自然結果進入'},
+        {term:'Social（社群）',          desc:'從 Facebook、Line 等社群平台連結進入'},
+        {term:'Referral（引薦）',        desc:'從其他網站的超連結點入'},
+      ],
+    },
+    metrics:[
+      {k:'活躍使用者', v:'846 人', n:'2025 全年'},
+      {k:'新使用者',   v:'829 人', n:'佔 98%'},
+      {k:'平均參與時間', v:'1m 20s', n:'每位使用者'},
+    ],
+    codes:['T04','T10'], codeLabel:'資訊落差與人力密集推廣',
+    qualSum:'Direct 57% = 院長助理就是最大行銷管道，平台名稱難以記憶與口述。',
+    quotes:[
+      {t:'我自己在推廣的時候，我也會唸到舌頭打結。', s:'院長助理（T10）'},
+      {t:'那他名字很好記，因為iSupport我可以支援我自己這樣子。', s:'院長助理（T04，02:40）'},
+      {t:'最久最久一個個案我就要收一個多小時。', s:'院長助理（T10）'},
+      {t:'目前推廣主要靠我在門診外主動一對一詢問，無行銷團隊，推廣成效有限。', s:'院長助理（T10）'},
+    ],
+    opts:[
+      {p:'high',   t:'製作 QR code 引導頁，降低推廣員口述負擔'},
+      {p:'medium', t:'加入中文副標「失智症照顧者線上學習」提升可搜尋性'},
+      {p:'low',    t:'與 virtualpassport.org.tw、tmh.org.tw 建立正式轉介連結'},
+    ],
+  },
+  {
+    id:'explore', stage:'1', name:'探索', sub:'首頁 / 關於頁 / 導覽',
+    align:'confl',
+    lead:'首頁無法引導使用者，關於頁成了真正的入口。',
+    detail:'關於頁瀏覽量（943次）是首頁（449次）的 2.1 倍；最新消息長期停更，讓平台看起來已廢棄。',
+    chart:{
+      type:'bar',
+      title:'各頁面瀏覽次數（2025 全年）',
+      bars:[
+        {label:'關於頁',    v:943, max:943, color:'#3b82f6'},
+        {label:'首頁(/)',   v:449, max:943, color:'#60a5fa'},
+        {label:'學習列表',  v:265, max:943, color:'#93c5fd'},
+        {label:'最新消息',  v:98,  max:943, color:'#cbd5e1'},
+      ],
+    },
+    metrics:[
+      {k:'首頁平均停留', v:'17.8 秒', n:'極短'},
+      {k:'關於頁停留', v:'39.2 秒', n:'全站最長'},
+      {k:'最新消息',   v:'98 次',   n:'全年'},
+    ],
+    codes:['T04','T05','T03'], codeLabel:'隱藏功能、可信度疑慮、在地化落差',
+    qualSum:'MP3 可下載、logo 可點擊等隱藏功能不可見；最新消息停更讓使用者產生平台廢棄的疑慮。',
+    quotes:[
+      {t:'很多家屬比較不知道的是左上角這個logo這個系統的這個名稱，這裡左上角，這一個是可以點擊的。', s:'院長助理（T04，10:08）'},
+      {t:'很多家屬比較不知道的是，其實這個mp3檔，它是可以下載的，可以直接放在手機裡面。', s:'院長助理（T04，09:37）'},
+      {t:'目前外部資源我們是先拿掉，雖然目錄有，但是我們先拿掉，因為之後要放台灣的這個照護資訊。', s:'院長助理（T03，16:44）'},
+    ],
+    opts:[
+      {p:'high',   t:'首頁加入清晰的價值主張與「立即開始學習」CTA'},
+      {p:'high',   t:'移除或隱藏停更的「最新消息」區塊以維持可信度'},
+      {p:'medium', t:'隱藏功能（logo 可點、MP3 可下載）加入視覺提示'},
+    ],
+  },
+  {
+    id:'loginwall', stage:'2', name:'登入牆', sub:'學習列表 → 內容頁',
+    align:'confl',
+    lead:'「免費平台」的登入牆造成全站最大流失點。',
+    detail:'86% 使用者（265→38）在觸及任何課程內容前直接放棄；平台對外宣稱免費，實際上瀏覽內容必須先登入。',
+    chart:{
+      type:'funnel2',
+      title:'學習內容轉換漏斗',
+      steps:[
+        {label:'學習列表頁', v:265, color:'#3b82f6'},
+        {label:'進入內容頁', v:38,  color:'#f59e0b', note:'轉換率 14%（流失 86%）'},
+      ],
+    },
+    metrics:[
+      {k:'學習列表使用者', v:'265 人', n:''},
+      {k:'進入內容頁',    v:'38 人',  n:''},
+      {k:'轉換率',        v:'14%',    n:'86% 流失於此'},
+    ],
+    codes:['T05','T08'], codeLabel:'免費承諾與登入門檻矛盾',
+    qualSum:'「免費學習」是平台核心承諾，但在最關鍵的一步設置了登入牆，承諾與現實矛盾。',
+    quotes:[
+      {t:'這個網站其實是 WHO 有規定說不可以做營利使用，所以這裡面的學習資源全部都是免費……但是要看的內容其實我們要先註冊。', s:'院長助理（T05，04:27）'},
+      {t:'有沒有辦法有個預覽的……就很像天下雜誌的文章我們手機閱讀到一部分，他加入會員這樣。', s:'院長助理（code 39）'},
+    ],
+    opts:[
+      {p:'high',   t:'加入內容預覽（partial disclosure），讓未登入者看部分內容再引導註冊'},
+      {p:'medium', t:'登入牆頁面說明「為何需要註冊」的具體好處'},
+    ],
+  },
+  {
+    id:'register', stage:'3', name:'註冊 / 登入', sub:'表單填寫 / 帳號開通',
+    align:'agree',
+    lead:'帳號開通流程幾近損壞，靠人工補丁維持運作。',
+    detail:'整體完成率約 10%；表單中途放棄率 57%；驗證信系統故障 — 院長助理以手動開通帳號作為最後補丁，量化與質化高度吻合。',
+    chart:{
+      type:'funnel3',
+      title:'註冊完成漏斗（頁面路徑推算）',
+      steps:[
+        {label:'登入頁',  v:376, color:'#3b82f6'},
+        {label:'前往註冊頁', v:71, color:'#60a5fa', note:'→ 19%'},
+        {label:'完成註冊', v:36,  color:'#f59e0b',  note:'→ 51%（整體 10%）'},
+      ],
+    },
+    metrics:[
+      {k:'整體完成率', v:'~10%', n:'推算值', w:'⚠ 未設定轉換事件'},
+      {k:'表單提交率', v:'43%',  n:'form_start 336 → submit 144'},
+      {k:'忘記密碼',  v:'12 次', n:'回訪者登入困難'},
+    ],
+    codes:['T08','T05','T11'], codeLabel:'高牆式註冊、驗證障礙、人力補丁',
+    qualSum:'欄位繁瑣 + 驗證信故障 + 身分未區分，院長助理每次收案平均超過 1 小時，以人力補足技術缺口。',
+    quotes:[
+      {t:'這也是我們的痛點之一，就是註冊要填寫的東西很多，所以流程上算是偏繁瑣。', s:'院長助理（T08）'},
+      {t:'沒有我收不到驗證信……有沒有就是好像都沒有，我試了兩三次。', s:'訪談者（T05，07:54）'},
+      {t:'就是沒有區分兩種使用者，一個是家屬，一個是醫護人員。', s:'院長助理（T08）'},
+      {t:'我遇到的狀況比較多，都是問註冊，為什麼沒有成功或是不能用。', s:'院長助理（T08）'},
+      {t:'有沒有辦法做得更友善，全部都做成下拉式選單，或者是像這個照顧幾年，其實可能就給個range給個範圍，一到3年三到5年5年以上之類的。', s:'院長助理（T08）'},
+    ],
+    opts:[
+      {p:'high',   t:'修復驗證信寄送問題（現為最大技術障礙）'},
+      {p:'high',   t:'精簡必填欄位；照顧年數改為下拉選單範圍選項'},
+      {p:'medium', t:'區分「家屬」與「醫護」兩種身分的分流註冊'},
+      {p:'medium', t:'設定 sign_up / login 轉換事件以取得精確數據'},
+    ],
+  },
+  {
+    id:'learn-ctx', stage:'4a', name:'學習（情境）', sub:'裝置 / 使用情境',
+    align:'comp',
+    lead:'手機流量不少，但年長者無法用手機真正學習。',
+    detail:'手機與桌機流量相近（各約 49%），但手機參與度（39%）明顯低於桌機（53%）；並非不想用，而是操作介面對年長者不友善、核心功能不可見。',
+    chart:{
+      type:'compare',
+      title:'裝置參與度比較',
+      rows:[
+        {label:'桌機（49%）', v:53, color:'#3b82f6', note:'參與度 53%'},
+        {label:'手機（49%）', v:39, color:'#f59e0b', note:'參與度 39%'},
+        {label:'平板（1%）',  v:36, color:'#94a3b8', note:'參與度 36%'},
+      ],
+      glossary:[
+        {term:'流量（各裝置佔比）',        desc:'所有工作階段中使用該裝置的比例；桌機與手機各 49%，代表訪客數量相近。'},
+        {term:'參與度（Engagement Rate）', desc:'工作階段中「有實際互動」的比例。GA4 定義：停留 10 秒以上，或觸發 2 個以上事件。數值越高代表使用者越專注投入。'},
+      ],
+    },
+    metrics:[
+      {k:'手機使用者', v:'424 人', n:'參與度 39%'},
+      {k:'桌機使用者', v:'420 人', n:'參與度 53%'},
+      {k:'MP3 下載',   v:'28 次', n:'全年'},
+      {k:'學習頁停留', v:'~6 分鐘', n:'364 秒'},
+    ],
+    codes:['T01','T02','T10'], codeLabel:'零碎學習條件、多元工具需求、數位落差',
+    qualSum:'「邊做家事邊聽」是主要情境，但 MP3 下載功能不可見、換頁音訊中斷，使核心使用情境無法順暢進行。',
+    quotes:[
+      {t:'很多家屬平常就已經忙於照顧了，沒有那麼多的精力或餘力再去做閱讀這樣子。', s:'院長助理（T01，13:03）'},
+      {t:'所以很多家屬就是邊做家事邊洗碗邊掃地的邊聽這樣。', s:'院長助理（T01，13:46）'},
+      {t:'使用者年紀都偏大，所以對這個 3C 的東西比較陌生。', s:'院長助理（T10）'},
+      {t:'很多家屬比較不知道的是，其實這個 mp3 檔，它是可以下載的，可以直接放在手機裡面。', s:'院長助理（T04，09:37）'},
+    ],
+    opts:[
+      {p:'high',   t:'修復換頁時音訊中斷問題，支援背景播放'},
+      {p:'high',   t:'MP3 下載按鈕移至顯眼位置，加入文字說明'},
+      {p:'medium', t:'手機版加大字體與觸控目標尺寸'},
+    ],
+  },
+  {
+    id:'learn-int', stage:'4b', name:'學習（互動）', sub:'進度記錄 / 練習題',
+    align:'agree',
+    lead:'平台無法記憶學習進度，每次都只能從頭開始。',
+    detail:'深層單元幾乎無人到達；無書籤、無進度記錄，形成結構性學習障礙。scroll 是最多事件（752次），但實質互動（click 51次）極少。',
+    chart:{
+      type:'bar',
+      title:'全站互動事件計數（2025 全年）',
+      bars:[
+        {label:'scroll',        v:752, max:752, color:'#94a3b8'},
+        {label:'form_start',    v:336, max:752, color:'#60a5fa'},
+        {label:'form_submit',   v:144, max:752, color:'#3b82f6'},
+        {label:'click',         v:51,  max:752, color:'#f59e0b'},
+        {label:'file_download', v:28,  max:752, color:'#10b981'},
+      ],
+    },
+    metrics:[
+      {k:'深層單元最高', v:'13 次', n:'促進溝通 / 失智症簡介'},
+      {k:'click 事件', v:'51 次', n:'全年'},
+      {k:'scroll 事件', v:'752 次', n:'被動瀏覽為主'},
+    ],
+    codes:['T09','T11'], codeLabel:'學習互動機制缺口、數據追蹤失效',
+    qualSum:'沒有書籤、沒有進度、練習題需要打字 — 平台既無法幫助使用者持續學習，也無法從數據自我改善。',
+    quotes:[
+      {t:'想要再聽第二遍的時候就不知道是哪一個單元了，這也是我們的痛點之一，也就是剛剛講的書籤功能。', s:'院長助理（T09）'},
+      {t:'沒有那個閱讀進度……今天他可能這個第一單元簡介可能聽到三分之一，聽到三分之二就掉了，就是沒有這個歷史搜尋的紀錄。', s:'院長助理（T09）'},
+      {t:'他有一個不好的地方就是播放的，同時我按下一頁，就切掉了，這個就是那個網站的設計可以再優化的部分。', s:'院長助理（T05，09:37）'},
+      {t:'他要打字就是很不友善，可不可以就是選擇。', s:'院長助理（T09，關於練習題）'},
+      {t:'他覺得這個內容偏簡單……有沒有辦法日後把這些教材把它做分級。', s:'院長助理（T09）'},
+      {t:'其實應該都超過，超過1000000，就是受限於經費的部分，所以很多功能到目前都沒有。', s:'院長助理（T11）'},
+    ],
+    opts:[
+      {p:'high',   t:'加入書籤或「已讀」標記功能'},
+      {p:'high',   t:'練習題改為選擇題，移除打字輸入'},
+      {p:'medium', t:'設定學習完成事件追蹤以補足數據盲點'},
+    ],
+  },
+  {
+    id:'return', stage:'5', name:'回訪', sub:'留存 / 持續學習',
+    align:'agree',
+    lead:'使用者完成任務後即離去，留存率全年為零。',
+    detail:'第 30 天留存率全年均為 0%；「病情緩解後動力消失」完全解釋數據。平台本質是任務型一次性使用，而非持續學習訂閱。',
+    chart:{
+      type:'retention',
+      title:'使用者留存率（2025 年度同類群組）',
+      rows:[
+        {label:'第 1 天',  v:2,  note:'極少數週出現非零', warn:false},
+        {label:'第 7 天',  v:1,  note:'全年僅 3 次非零',  warn:false},
+        {label:'第 30 天', v:0,  note:'全年 365 天均為 0%', warn:true},
+      ],
+    },
+    metrics:[
+      {k:'回訪率',      v:'19.7%', n:'163 / 829 人'},
+      {k:'第 7 天留存', v:'~0%',   n:'全年僅 3 次非零'},
+      {k:'第 30 天留存', v:'0%',   n:'全年均為 0%'},
+    ],
+    codes:['T09','T11'], codeLabel:'任務型使用現實、數據應用受限',
+    qualSum:'「工具包很適合照護新手或剛被診斷的家屬」— 這本身就說明了任務型、一次性使用的本質，而非持續學習平台。',
+    quotes:[
+      {t:'症狀比較緩解比較控制比較沒有那麼惡化的時候……這個家屬可能就少了繼續進修學習的這個動力了。', s:'院長助理（T09）'},
+      {t:'現在收集的資料其實是沒用的。', s:'院長助理（T11）'},
+      {t:'這個工具包很適合兩個對象，一個就是照護新手，一個就是剛被診斷。', s:'院長助理（code 57）'},
+    ],
+    opts:[
+      {p:'high',   t:'接受任務型使用現實，設計短期密集學習路徑（如 7 天課程）'},
+      {p:'medium', t:'學習進度視覺化，降低每次重新找起點的摩擦'},
+      {p:'medium', t:'設定學習事件追蹤，讓數據真正可用'},
+    ],
+  },
+];
+
+// ── State ──
+let activeId = data[0].id;
+let activeFilter = 'all';
+
+// ── Chart renderers ──
+function chartHTML(c) {
+  if (!c) return '';
+  if (c.type === 'stacked')   return stackedBar(c);
+  if (c.type === 'bar')       return barChart(c);
+  if (c.type === 'compare')   return compareChart(c);
+  if (c.type === 'funnel2')   return funnel2(c);
+  if (c.type === 'funnel3')   return funnel3(c);
+  if (c.type === 'retention') return retentionChart(c);
+  return '';
+}
+
+function stackedBar(c) {
+  const segs = c.segs.map(s =>
+    `<div class="stk-seg" style="width:${s.pct}%;background:${s.color}" title="${s.label} ${s.pct}% (${s.raw}次)">${s.pct>=10?s.pct+'%':''}</div>`
+  ).join('');
+  const legend = c.segs.map(s =>
+    `<div class="leg-item"><div class="leg-dot" style="background:${s.color}"></div>${s.label} <strong>${s.pct}%</strong>（${s.raw}次）</div>`
+  ).join('');
+  const glossaryHTML = c.glossary ? `
+    <table class="src-glossary">
+      <tr><th>來源名稱</th><th>說明</th></tr>
+      ${c.glossary.map(g=>`<tr><td>${g.term}</td><td>${g.desc}</td></tr>`).join('')}
+    </table>` : '';
+  return `<div class="chart-title">${c.title}</div>
+    <div class="stacked-bar">${segs}</div>
+    <div class="stk-legend">${legend}</div>
+    ${glossaryHTML}`;
+}
+
+function barChart(c) {
+  const mx = Math.max(...c.bars.map(b=>b.max||b.v));
+  const rows = c.bars.map(b=>{
+    const pct = Math.round(b.v/mx*100);
+    return `<div class="bar-row">
+      <div class="bar-lbl">${b.label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${b.color}">${pct>=18?b.v:''}</div></div>
+      <div class="bar-val">${b.v}</div>
+    </div>`;
+  }).join('');
+  return `<div class="chart-title">${c.title}</div><div class="bar-chart">${rows}</div>`;
+}
+
+function compareChart(c) {
+  const rows = c.rows.map(r=>
+    `<div class="cmp-row">
+      <div class="cmp-lbl">${r.label}</div>
+      <div class="cmp-track"><div class="cmp-fill" style="width:${r.v}%;background:${r.color}">${r.v}%</div></div>
+      <div class="cmp-note">${r.note}</div>
+    </div>`
+  ).join('');
+  const glossaryHTML = c.glossary ? [
+    '<table class="src-glossary">',
+    '<tr><th>名詞</th><th>說明</th></tr>',
+    c.glossary.map(g => '<tr><td>' + g.term + '</td><td>' + g.desc + '</td></tr>').join(''),
+    '</table>'
+  ].join('') : '';
+  return `<div class="chart-title">${c.title}</div><div class="cmp-chart">${rows}</div>` + glossaryHTML;
+}
+
+function funnel2(c) {
+  const [s1, s2] = c.steps;
+  return `<div class="chart-title">${c.title}</div>
+    <div class="funnel-wrap">
+      <svg viewBox="0 0 300 115" xmlns="http://www.w3.org/2000/svg" style="font-family:inherit">
+        <rect x="10" y="4" width="280" height="38" rx="5" fill="${s1.color}"/>
+        <text x="150" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="600">${s1.label}：${s1.v} 人</text>
+        <text x="150" y="58" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700">▼ ${s2.note}</text>
+        <rect x="85" y="66" width="130" height="38" rx="5" fill="${s2.color}"/>
+        <text x="150" y="89" text-anchor="middle" fill="white" font-size="12" font-weight="600">${s2.label}：${s2.v} 人</text>
+      </svg>
+    </div>`;
+}
+
+function funnel3(c) {
+  const [s1, s2, s3] = c.steps;
+  return `<div class="chart-title">${c.title}</div>
+    <div class="funnel-wrap">
+      <svg viewBox="0 0 300 175" xmlns="http://www.w3.org/2000/svg" style="font-family:inherit">
+        <rect x="10" y="4" width="280" height="38" rx="5" fill="${s1.color}"/>
+        <text x="150" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="600">${s1.label}：${s1.v} 人</text>
+        <text x="150" y="57" text-anchor="middle" fill="#94a3b8" font-size="11">▼ ${s2.note}</text>
+        <rect x="40" y="66" width="220" height="38" rx="5" fill="${s2.color}"/>
+        <text x="150" y="89" text-anchor="middle" fill="white" font-size="12" font-weight="600">${s2.label}：${s2.v} 人</text>
+        <text x="150" y="120" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700">▼ ${s3.note}</text>
+        <rect x="95" y="129" width="110" height="38" rx="5" fill="${s3.color}"/>
+        <text x="150" y="152" text-anchor="middle" fill="white" font-size="12" font-weight="600">${s3.label}：${s3.v} 人</text>
+      </svg>
+    </div>`;
+}
+
+function retentionChart(c) {
+  const rows = c.rows.map(r => {
+    const barW = r.v === 0 ? 0 : Math.max(r.v * 5, 4);
+    return `<div class="ret-row">
+      <div class="ret-lbl">${r.label}</div>
+      <div class="ret-track"><div class="ret-fill" style="width:${barW}%">${r.v>0?r.v+'%':''}</div></div>
+      <div class="ret-note" style="color:${r.warn?'#ef4444':'#94a3b8'}">${r.v===0?'0%':'~'+r.v+'%'} — ${r.note}</div>
+    </div>`;
+  }).join('');
+  return `<div class="chart-title">${c.title}</div><div class="ret-chart">${rows}</div>`;
+}
+
+// ── Panel renderer ──
+function renderPanel(d) {
+  const a = ALIGN[d.align];
+
+  const metrics = d.metrics.map(m=>`
+    <div class="metric-card">
+      <div class="m-key">${m.k}</div>
+      <div class="m-val">${m.v}</div>
+      ${m.n?`<div class="m-note">${m.n}</div>`:''}
+      ${m.w?`<div class="m-warn">${m.w}</div>`:''}
+    </div>`).join('');
+
+  const codes = d.codes.map(c=>`<span class="code-tag">${c}</span>`).join('');
+
+  const quotes = d.quotes.map(q=>`
+    <div class="quote">「${q.t}」<div class="q-src">— ${q.s}</div></div>`).join('');
+
+  const opts = d.opts.map(o=>{
+    const p = PRI[o.p];
+    return `<div class="opt-item">
+      <span class="p-pill ${p.cls}">${p.text}</span>
+      <span class="opt-text">${o.t}</span>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="ph">
+      <div class="ph-top">
+        <span class="ph-num">階段 ${d.stage}</span>
+        <span class="ph-name">${d.name}</span>
+        <span class="ph-sub">${d.sub}</span>
+        <button class="align-badge ${a.cls}" onclick="cycleAlign('${d.id}')" title="點擊切換">${a.label}</button>
+      </div>
+      <div class="ph-summary ps-${d.align}">
+        <div class="ph-lead">${d.lead}</div>
+        <div class="ph-detail">${d.detail}</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-title">GA4 量化指標 (What)</div>
+      ${chartHTML(d.chart)}
+      <div class="metrics-grid">${metrics}</div>
+    </div>
+    <div class="section">
+      <div class="sec-title">訪談質化回饋 (Why / Feel)</div>
+      <div class="code-tags">${codes}<span class="code-lbl">${d.codeLabel}</span></div>
+      <div class="qual-sum">${d.qualSum}</div>
+      <div class="quotes">${quotes}</div>
+    </div>
+    <div class="section">
+      <div class="sec-title">潛在優化點</div>
+      <div class="opt-list">${opts}</div>
+    </div>`;
+}
+
+// ── Timeline renderer ──
+function renderTimeline() {
+  document.getElementById('timeline').innerHTML = data.map(d=>{
+    const a = ALIGN[d.align];
+    const isActive  = d.id === activeId;
+    const isDimmed  = activeFilter !== 'all' && d.align !== activeFilter;
+    return `
+      <div class="tl-item${isActive?' active':''}${isDimmed?' dimmed':''}"
+           onclick="selectStage('${d.id}')">
+        <div class="tl-connector"></div>
+        <div class="tl-dot"></div>
+        <div class="tl-text">
+          <div class="tl-name">階段 ${d.stage}　${d.name}</div>
+          <div class="tl-sub">${d.sub}</div>
+        </div>
+        <div class="tl-badge" style="background:${a.dotColor}" title="${a.label}"></div>
+      </div>`;
+  }).join('');
+}
+
+// ── Actions ──
+function selectStage(id) {
+  activeId = id;
+  renderTimeline();
+  const d = data.find(x=>x.id===id);
+  document.getElementById('panel').innerHTML = renderPanel(d);
+  document.getElementById('panel').scrollTop = 0;
+}
+
+function cycleAlign(id) {
+  const d = data.find(x=>x.id===id);
+  d.align = ALIGN_ORDER[(ALIGN_ORDER.indexOf(d.align)+1) % ALIGN_ORDER.length];
+  renderTimeline();
+  document.getElementById('panel').innerHTML = renderPanel(d);
+}
+
+function applyFilter(type, btn) {
+  activeFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.className='filter-btn');
+  btn.className = `filter-btn ${type==='all'?'fa':type==='agree'?'fag':type==='comp'?'fco':'fcn'}`;
+  renderTimeline();
+}
+
+document.addEventListener('keydown', e=>{
+  const ids = data.map(d=>d.id);
+  const i = ids.indexOf(activeId);
+  if (e.key==='ArrowDown' && i<ids.length-1) selectStage(ids[i+1]);
+  if (e.key==='ArrowUp'   && i>0)            selectStage(ids[i-1]);
+});
+
+// ── Init ──
+renderTimeline();
+selectStage(data[0].id);
+</script>
+</body>
+</html>
